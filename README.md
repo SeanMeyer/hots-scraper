@@ -1,7 +1,5 @@
 # hots-scraper
 
-A Clojure app to ... well, that part is up to you.
+Get hots information and add to database.
 
-## Usage
-
-FIXME
+Work in progress, does not currently work.
