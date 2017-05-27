@@ -64,7 +64,32 @@
       (map #(hash-map :winrate %1 :played %2)
             (hero-win-rates table)
             (hero-games-played table)))))
-                
+
+(defn add-league-to-map
+  "Takes a map and adds data for league to that map, using league as keyword"
+  [map league]
+  (toggle-leagues [league])
+  (let [new-map
+        (assoc map league (hero-map (get-page-html)))]
+    (toggle-leagues [league])
+    new-map))
+
+
+(defn all-data-map
+  "Must already be on stats page, returns map with data for all leagues"
+  []
+  (reduce
+    add-league-to-map
+    {:all (hero-map (get-page-html))}
+    [:master :diamond]))
+
+(defn get-all-data
+  []
+  (open-hero-stats-page)
+  (let [all-data (all-data-map)]
+    (close-browser)
+    all-data))
+
 
 (defn -main []
   (-> (client/get "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
