@@ -12,19 +12,35 @@
 
 
 (defn toggle-leagues
-  "Given a vector of league keywords, load those leagues on page"
+  "Given a vector of league keywords, load those leagues on page
+   Returns page HTML after toggling"
   [leagues]
-  (do
-    (api/click "#ComboBoxLeague_Input")
-    (doseq [key leagues]
-      (api/click (format "#ComboBoxLeague_DropDown li:nth-of-type(%d)" 
-                   (key league))))
-    (api/click "#body")))
+  (api/click "#ComboBoxLeague_Input")
+  (doseq [key leagues]
+    (api/click (format "#ComboBoxLeague_DropDown li:nth-of-type(%d)"
+                 (key league))))
+  (api/click "#body")
+  (api/wait-until-clickable "#MainContent_divControlContainer")
+  (Thread/sleep 1000)
+  (api/attribute "html" "innerHTML"))
+
+
+(defn close-browser
+  "Closes open chrome instance if one exists"
+  []
+  (api/quit))
+
+
+(defn open-hero-stats-page
+  "Opens browser and goes to the hero and map statistics page"
+  []
+  (api/set-driver! (driver/create-chrome))
+  (api/to "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics"))
 
 
 (defn selenium-test
   []
-  (do
-    (api/set-driver! (driver/create-chrome))
-    (api/to "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
-    (toggle-leagues [:platinum :silver])))
+  (open-hero-stats-page)
+  (let [result (toggle-leagues [:master])]
+    (close-browser)
+    result))
