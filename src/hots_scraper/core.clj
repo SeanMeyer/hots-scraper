@@ -65,6 +65,7 @@
             (hero-win-rates table)
             (hero-games-played table)))))
 
+
 (defn add-league-to-map
   "Takes a map and adds data for league to that map, using league as keyword"
   [map league]
@@ -82,6 +83,7 @@
     add-league-to-map
     {:all (hero-map (get-page-html))}
     [:master :diamond :platinum :gold :silver :bronze]))
+
 
 (defn get-all-data
   []
