@@ -25,9 +25,6 @@
 (defn selenium-test
   []
   (do
-    (System/setProperty 
-      "webdriver.chrome.driver" 
-      "C:\\Users\\G950155\\AppData\\Local\\Google\\Chrome\\Application\\chromedriver.exe")
     (api/set-driver! (driver/create-chrome))
     (api/to "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
     (api/click "#ComboBoxLeague_Input")
