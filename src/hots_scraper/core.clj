@@ -3,6 +3,7 @@
   (:require [hickory.select :as s])
   (:require [clj-http.client :as client])
   (:require [clojure.string :as string])
+  (:require [hots-scraper.headless :refer :all])
   (:gen-class))
 
 

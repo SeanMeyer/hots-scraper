@@ -12,8 +12,7 @@
 
 
 (defn toggle-leagues
-  "Given a vector of league keywords, load those leagues on page
-   Returns page HTML after toggling"
+  "Given a vector of league keywords, load those leagues on page"
   [leagues]
   (api/click "#ComboBoxLeague_Input")
   (doseq [key leagues]
@@ -21,7 +20,12 @@
                  (key league))))
   (api/click "#body")
   (api/wait-until-clickable "#MainContent_divControlContainer")
-  (Thread/sleep 1000)
+  (Thread/sleep 1000))
+
+
+(defn get-page-html
+  "Return html for the current page"
+  []
   (api/attribute "html" "innerHTML"))
 
 
