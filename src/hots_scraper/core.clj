@@ -6,19 +6,17 @@
   (:gen-class))
 
 
-(def site-tree (-> (client/get "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
-                   :body
-                   parse
-                   as-hickory))
-
-
-(def table-body (-> (s/select (s/child
-                                (s/and
-                                  (s/tag :table)
-                                  (s/class "rgMasterTable"))
-                                (s/tag :tbody))
-                      site-tree)
-                    first))
+(defn table-body
+  "Takes plain html for entire page, returns hickory tree for the hero data table"
+  [site-html]
+  (->> (parse site-html)
+       (as-hickory)
+       (s/select (s/child
+                   (s/and
+                     (s/tag :table)
+                     (s/class "rgMasterTable"))
+                   (s/tag :tbody)))
+      first))
 
 
 (defn hero-td-contents
@@ -58,13 +56,16 @@
 
 (defn hero-map
   "Return map of hero details"
-  [table-body]
-  (zipmap
-    (map keyword (hero-names table-body))
-    (map #(hash-map :winrate %1 :played %2)
-          (hero-win-rates table-body)
-          (hero-games-played table-body))))
+  [site-html]
+  (let [table (table-body site-html)]
+    (zipmap
+      (map keyword (hero-names table))
+      (map #(hash-map :winrate %1 :played %2)
+            (hero-win-rates table)
+            (hero-games-played table)))))
                 
 
 (defn -main []
-  (println (hero-map table-body)))
+  (-> (client/get "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
+      :body
+      hero-map))
