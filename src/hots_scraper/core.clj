@@ -81,7 +81,7 @@
   (reduce
     add-league-to-map
     {:all (hero-map (get-page-html))}
-    [:master :diamond]))
+    [:master :diamond :platinum :gold :silver :bronze]))
 
 (defn get-all-data
   []
