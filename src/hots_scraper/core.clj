@@ -4,6 +4,8 @@
   (:require [clj-http.client :as client])
   (:require [clojure.string :as string])
   (:require [hots-scraper.headless :refer :all])
+  (:require [korma.db :as korma.db])
+  (:require [korma.core :as korma.core])
   (:gen-class))
 
 
@@ -95,3 +97,18 @@
   (-> (client/get "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
       :body
       hero-map))
+
+(korma.db/defdb db (korma.db/postgres {:db "hots-data"
+                                       :user "postgres"
+                                       :password "h163ry"
+                                       :host "192.168.0.6"
+                                       :port "5432"}))
+                                       
+
+
+
+
+
+
+
+

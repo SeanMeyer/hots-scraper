@@ -3,7 +3,8 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [hickory "0.7.1"]
                  [clj-http "3.6.0"]
-                 [limo "0.1.8"]]
+                 [limo "0.1.8"]
+                 [korma "0.4.3"]]  
   :javac-options ["-target" "1.6" "-source" "1.6" "-Xlint:-options"]
   :aot [hots-scraper.core]
   :main hots-scraper.core)
