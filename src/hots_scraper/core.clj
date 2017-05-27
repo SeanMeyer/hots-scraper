@@ -4,8 +4,8 @@
   (:require [clj-http.client :as client])
   (:require [clojure.string :as string])
   (:require [hots-scraper.headless :refer :all])
-  (:require [korma.db :as korma.db])
-  (:require [korma.core :as korma.core])
+  (:require [korma.db :as db])
+  (:require [korma.core :as korma])
   (:gen-class))
 
 
@@ -98,13 +98,14 @@
       :body
       hero-map))
 
-(korma.db/defdb db (korma.db/postgres {:db "hots-data"
+(db/defdb db (db/postgres {:db "hots-data"
                                        :user "postgres"
                                        :password "h163ry"
                                        :host "192.168.0.6"
                                        :port "5432"}))
+(korma/defentity test)
+(korma/select test)
                                        
-
 
 
 
