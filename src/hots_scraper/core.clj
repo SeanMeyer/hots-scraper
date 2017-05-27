@@ -23,7 +23,7 @@
 
 (defn hero-td-contents
   "Return contents of the nth td per hero"
-  [n]
+  [n table-body]
   (map #(first (:content %))
     (s/select (s/child
                 (s/tag :tr)
@@ -31,26 +31,40 @@
       table-body)))
 
 
-(def hero-names (map 
-                  #(get-in % [:attrs :title])
-                  (hero-td-contents 2)))
+(defn hero-names
+  "Return sequence of hero names, spaces stripped"
+  [table-body]
+  (map
+    #(-> (get-in % [:attrs :title])
+         (string/replace " " ""))
+    (hero-td-contents 2 table-body)))
 
 
-(def hero-win-rates (map #(-> (string/replace % " %" "")
-                              Double/parseDouble)
-                      (hero-td-contents 6)))
+(defn hero-win-rates
+  "Return sequence of win rates as doubles"
+  [table-body]
+  (map #(-> (string/replace % " %" "")
+            Double/parseDouble)
+    (hero-td-contents 6 table-body)))
 
 
-(def hero-games-played (map #(-> (string/replace % "," "")
-                                 Integer/parseInt)
-                         (hero-td-contents 3)))
+(defn hero-games-played
+  "Return sequence of games played as integers"
+  [table-body]
+  (map #(-> (string/replace % "," "")
+            Integer/parseInt)
+    (hero-td-contents 3 table-body)))
 
 
-(def hero-map (zipmap 
-                (map keyword hero-names)
-                (map #(hash-map :winrate %1 :played %2) 
-                      hero-win-rates hero-games-played)))
+(defn hero-map
+  "Return map of hero details"
+  [table-body]
+  (zipmap
+    (map keyword (hero-names table-body))
+    (map #(hash-map :winrate %1 :played %2)
+          (hero-win-rates table-body)
+          (hero-games-played table-body))))
                 
 
 (defn -main []
-  (println hero-map))
+  (println (hero-map table-body)))
