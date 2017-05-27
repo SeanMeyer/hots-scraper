@@ -11,7 +11,7 @@
              :bronze 6})
 
 
-(defn select-leagues
+(defn toggle-leagues
   "Given a vector of league keywords, load those leagues on page"
   [leagues]
   (do
@@ -27,5 +27,4 @@
   (do
     (api/set-driver! (driver/create-chrome))
     (api/to "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
-    (api/click "#ComboBoxLeague_Input")
-    (select-leagues [:platinum :silver])))
+    (toggle-leagues [:platinum :silver])))
