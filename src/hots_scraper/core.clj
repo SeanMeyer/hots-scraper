@@ -6,7 +6,7 @@
   (:gen-class))
 
 
-(def site-tree (-> (client/get "https://www.hotslogs.com")
+(def site-tree (-> (client/get "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics")
                    :body
                    parse
                    as-hickory))
