@@ -1,6 +1,7 @@
 (ns hots-scraper.headless
   (:require [limo.api :as api]
-   :require [limo.driver :as driver]))
+            [limo.driver :as driver])
+  (:import org.openqa.selenium.chrome.ChromeOptions))
 
 
 (def league {:master 1
@@ -38,7 +39,10 @@
 (defn open-hero-stats-page
   "Opens browser and goes to the hero and map statistics page"
   []
-  (api/set-driver! (driver/create-chrome))
+  (api/set-driver! (driver/create-chrome
+                     (doto (ChromeOptions.)
+                       (.setBinary "path to the dev version of chrome")
+                       (.addArguments ["headless"]))))
   (api/to "https://www.hotslogs.com/Sitewide/HeroAndMapStatistics"))
 
 
