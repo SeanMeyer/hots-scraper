@@ -39,20 +39,53 @@
     (hero-td-contents 2 table-body)))
 
 
+(defn parse-comma-number
+  "Parse numeric string (with comma seperators) into Long"
+  [num]
+  (-> (string/replace num "," "")
+      Long/parseLong))
+
+
+(defn parse-percent-number
+  "Parse a numeric percentage string into a Double"
+  [num]
+  (-> (string/replace num " " "")
+      (string/replace "%" "")
+      Double/parseDouble))
+
+
 (defn hero-win-rates
   "Return sequence of win rates as doubles"
   [table-body]
-  (map #(-> (string/replace % " %" "")
-            Double/parseDouble)
+  (map parse-percent-number
     (hero-td-contents 6 table-body)))
 
 
 (defn hero-games-played
-  "Return sequence of games played as integers"
+  "Return sequence of games played"
   [table-body]
-  (map #(-> (string/replace % "," "")
-            Integer/parseInt)
+  (map parse-comma-number
     (hero-td-contents 3 table-body)))
+
+
+(defn hero-win-delta
+  [table-body]
+  (map #(-> (:content %)
+            first
+            parse-percent-number)
+    (hero-td-contents 7 table-body)))
+
+
+(defn hero-popularity
+  [table-body]
+  (map parse-percent-number
+    (hero-td-contents 5 table-body)))
+
+
+(defn hero-games-banned
+  [table-body]
+  (map parse-comma-number
+    (hero-td-contents 4 table-body)))
 
 
 (defn hero-map
@@ -61,9 +94,15 @@
   (let [table (table-body site-html)]
     (zipmap
       (map keyword (hero-names table))
-      (map #(hash-map :winrate %1 :played %2)
+      (map #(hash-map :winrate %1 :played %2
+                      :banned %3 :popularity %4
+                      :win-delta %5)
             (hero-win-rates table)
-            (hero-games-played table)))))
+            (hero-games-played table)
+            (hero-games-banned table)
+            (hero-popularity table)
+            (hero-win-delta table)))))
+
 
 (defn add-league-to-map
   "Takes a map and adds data for league to that map, using league as keyword"
@@ -82,6 +121,7 @@
     add-league-to-map
     {:all (hero-map (get-page-html))}
     [:master :diamond :platinum :gold :silver :bronze]))
+
 
 (defn get-all-data
   []
