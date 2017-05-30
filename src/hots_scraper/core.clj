@@ -6,6 +6,8 @@
   (:require [hots-scraper.headless :refer :all])
   (:require [korma.db :as db])
   (:require [korma.core :as korma])
+  (:require [clj-time.core :as t])
+  (:require [clj-time.coerce :as t2])
   (:gen-class))
 
 
@@ -105,7 +107,47 @@
                                        :port "5432"}))
 (korma/defentity test)
 (korma/select test)
+(empty? (korma/select test (korma/where {:id 7})))
+(korma/insert test (korma/values {:text "From Clojure"}))
 
+(defn insert-data [data]
+  (defn hero-id [hero]
+    (korma/defentity heroes)
+    (defn getheroe
+      (korma/select heroes (korma/where {:hero-name-key hero})))
+    (defn puthero
+      (korma/insert heroes (korma/values {:hero-name-key hero,
+                                          :hero-name-display hero})))
+    (let [sqlret (getheroe)]
+      (if (empty? sqlret)
+        ((puthero) :id)
+        ((first sqlret) :id))))
+  (defn league-id [league]
+    (korma/defentity leagues)
+    (defn getleague
+      (korma/select leagues (korma/where {:league-name league})))
+    (defn putleague
+      (korma/insert heroes (korma/values {:league-name league})))
+    (let [sqlret (getleague)]
+      (if (empty? sqlret)
+        ((putleague) :id)
+        ((first sqlret) :id))))
+  (defn sql-now[]
+    (t2/to-sql-time (t/now)))
+  (doseq [keyval data]
+    (korma/defentity global-hero-data)
+    (let [leagueid (league-id (key keyval))]
+      (doseq [kv (val keyval)]
+        (let [heroid (hero-id (key kv))]
+          [v (val kv)]
+          (korma/insert global-hero-data (korma/values {:league-id leagueid}
+                                                      , :hero-id heroid
+                                                      , :win-percent (v :winrate)
+                                                      , :win-delta (v :??)
+                                                      , :popularity (v :??)
+                                                      , :games-played (v :played)
+                                                      , :games-banned (v :??)
+                                                      , :date (sql-now))))))))
 
 (def sample-return
   {:all {:Ragnaros {:played 11031, :winrate 53.3},
