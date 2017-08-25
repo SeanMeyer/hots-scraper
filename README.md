@@ -2,4 +2,4 @@
 
 Get hots information and add to database.
 
-Work in progress, does not currently work.
+Work in progress, does not currently work. Test.
